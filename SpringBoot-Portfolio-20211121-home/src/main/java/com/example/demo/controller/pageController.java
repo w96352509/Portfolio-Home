@@ -18,5 +18,22 @@ public class pageController {
 
 		return "classify";
 	}
+	
+	@RequestMapping("/investor")
+	public String indexinvestor() {
+		
+		return "investor";
+	}
+	
+	@RequestMapping("/tstock")
+	public String indextstock() {
+		
+		return "tstock";
+	}
 
+	@RequestMapping("/watch")
+	public String indexwatch() {
+		
+		return "watch";
+	}
 }

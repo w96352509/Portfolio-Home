@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,12 +25,12 @@ public class ClassifyController {
 	@Autowired
 	private ClassifyRepository classifyRepository;
 
-	@RequestMapping(value = { "/", "/query" })
+	@GetMapping(value = { "/", "/query" })
 	public List<Classify> query() {
 		return classifyRepository.findAll();
 	}
 	
-	@RequestMapping(value = {"/{id}" , "/get/{id}"})
+	@GetMapping(value = {"/{id}" , "/get/{id}"})
 	public Classify get(@PathVariable("id") Integer id) {
 		Classify classify = classifyRepository.findById(id).get();
 		return classify ;
@@ -61,5 +63,13 @@ public class ClassifyController {
 		}
 		classifyRepository.saveAndFlush(classify);
 		return true ;
+	}
+	
+	@DeleteMapping(value = {"/{id}", "/delete/{id}"})
+	@Transactional
+	public Boolean delete(@PathVariable("id") Integer id) {
+		Classify classify = get(id);
+		classifyRepository.deleteById(classify.getId());
+		return true;
 	}
 }
