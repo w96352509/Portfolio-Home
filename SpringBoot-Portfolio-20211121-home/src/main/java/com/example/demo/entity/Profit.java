@@ -11,7 +11,7 @@ import org.hibernate.annotations.Subselect;
 @Subselect("SELECT ROW_NUMBER() OVER() AS id, p.investor_id as invid, c.name as name, SUM(p.amount * (s.price-p.cost)) as subtotal "
         + "FROM Classify c, Portfolio p, TStock s "
         + "WHERE p.t_stock_id = s.id AND s.classify_id = c.id "
-        + "GROUP BY p.investor_id, c.name") // p.investor.id=:id AND 
+        + "GROUP BY p.investor_id, c.name") // p.investor.id=:id AND //所有人購買的股票的獲利
 
 public class Profit {
     @Id

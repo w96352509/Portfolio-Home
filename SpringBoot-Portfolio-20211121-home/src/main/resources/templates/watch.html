@@ -6,77 +6,73 @@
 <th:block th:include="./include/header :: header"></th:block>
 
 <script>
-            var session_watch_id = '[[${#session.getAttribute("watch_id")}]]';
-            $(document).ready(function () {
-                $("#upt").on("click", function () {
-                    var jsonObj = $('#myform').serializeObject();
-                    var jsonStr = JSON.stringify(jsonObj);
-                    $.ajax({
-                        url: "/portfolio2/watch/" + session_watch_id,
-                        type: "PUT",
-                        contentType: "application/json; charset=utf-8",
-                        data: jsonStr,
-                        cache: false,
-                        processData: false,
-                        success: function (resposeJsonObject) {
-                            table_list1();
-                        }
-                    });
-                });
-
-                $("#myTable1").on("click", "tr td:nth-child(5)", function () {
-                    var tstock_id = $(this).attr('tstock_id');
-                    if (confirm("是否要刪除？" + tstock_id)) {
-                        $.ajax({
-                            url: "/portfolio2/watch/" + session_watch_id + "/remove/" + tstock_id,
-                            type: "DELETE",
-                            cache: false,
-                            processData: false,
-                            success: function (resposeJsonObject) {
-                                table_list1();
-                            }
-                        });
-                    }
-                });
-                
-                $("#myTable2").on("click", "tr td:nth-child(5)", function () {
-                    // 判斷該 tstock_id 是否已經加入 Watch ?
-                    var tstock_id = $(this).attr('tstock_id');
-                    var flag = true;  //判定模式
-                    if (watch != null && watch.tStocks != null) {
-                        $.each(watch.tStocks, function (i, item) {
-                            if (item.id == tstock_id) {
-                                alert(item.name + ' ' + item.symbol + ' 已加入！');
-                                flag = false;
-                                return;
-                            }
-                        });
-                    }
-                    if (flag && confirm("是否要增加？")) {
-                        $.ajax({
-                            url: "/portfolio2/watch/" + session_watch_id + "/add/" + tstock_id,
-                            type: "GET",
-                            cache: false,
-                            processData: false,
-                            success: function (resposeJsonObject) {
-                                table_list1();
-                            }
-                        });
-                    }
-                });
-
-                // 資料列表(Watch List)
-                table_list1();
-                // 資料列表(TStock List)
-                table_list2();
-                
-                
-            });
-            
-            // 1. 透過 session_watch_id 找到 watch
-            // 2. 再透過 watch.tStocks 取得觀察股(tstock)資料
-            function table_list1() {
-                $.get("/portfolio2/watch/" + session_watch_id, function (data, status) {
+        var session_watch_id = '[[${#session.getAttribute("watch_id")}]]';
+        $(document).ready(function(){
+        	 $("#upt").on("click",function(){
+        		  var jsonObj = $('#myform').serializeObject();
+        		  var jsonStr = JSON.stringify(jsonObj);
+        		  $.ajax({
+        			  url : "/portfolio2/watch/"+session_watch_id ,
+        			  type : "PUT",
+        			  data: jsonStr,
+        			  contentType:"application/json;charset=utf-8",
+        			  success:function(){
+        				  table_list1();  
+        			  }
+        		  })
+        	 });        	
+        	 $("#myTable1").on("click", "tr td:nth-child(5)", function () {
+                 var tstock_id = $(this).attr('tstock_id');
+                 if (confirm("是否要刪除？" + tstock_id)) {
+                     $.ajax({
+                         url: "/portfolio2/watch/" + session_watch_id + "/del/" + tstock_id,
+                         type: "DELETE",
+                         cache: false,
+                         processData: false,
+                         success: function (resposeJsonObject) {
+                             table_list1();
+                         }
+                     });
+                 }
+             });
+        	 
+        	 $("#myTable2").on("click","tr td:nth-child(5)",function(){
+        	  var tstock_id = $(this).attr('tstock_id');  
+        	  var flag = true;
+        	  if (watch != null && watch.tStocks != null){
+        		  $.each(watch.tStocks,function(i , item){
+        			  if(item.id == tstock_id){
+        				  alert(item.name + ' ' + item.symbol + ' 已加入！');
+        				  flag = false;
+        				  return;
+        			  }
+        		  });
+        	  }
+        	  if (flag && confirm("是否要增加？")){
+        		  $.ajax({
+        			  url: "/portfolio2/watch/" + session_watch_id + "/add/" + tstock_id,
+        			  type : "GET",
+        			  contentType:"application/json;charset=utf-8",
+        			  success:function(){
+        				  table_list1();  
+        			  }  
+        			})
+        	  }
+        }); 
+        	
+             	 
+        	
+        	
+        	
+        	
+        	//----------------
+        	table_list1();
+        	table_list2();
+        });
+//1.透過 session_watch_id 找到 watch
+// 2. 再透過 watch.tStocks 取得觀察股(tstock)資料 
+function table_list1() {
+                $.get("/portfolio2/watch/get/" + session_watch_id, function (data, status) {
                     console.log(JSON.stringify(data));
                     $("#myform").find("#id").val(data.id);
                     $("#myform").find("#name").val(data.name);
@@ -97,29 +93,26 @@
                     });
                 });
             }
-            
-            // 取得所有 tstock 列表資料
-            function table_list2() {
-                $.get("/portfolio2/tstock/", function (datas, status) {
-                    console.log(JSON.stringify(datas));
-                    $("#myTable2 tbody > tr").remove();
-                    $.each(datas, function (i, item) {
-                        var html = '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td tstock_id="{4}">{5}</td></tr>';
-                        addbtn_html = '<button type="button" class="btn btn-success">新增</button>';
-
-                        $('#myTable2').append(String.format(html,
-                                item.id,
-                                item.name,
-                                item.symbol,
-                                item.classify.name,
-                                item.id,
-                                addbtn_html
-                                ));
-                    });
-                });
-            
-            }
-        </script>
+//取得所有 tstock 列表資料
+function table_list2(){
+	$.get("/portfolio2/tstock/" , function(datas , status){
+		$("#myTable2 tbody > tr").remove();
+		$.each(datas,function(i,item){
+			addbtn_html = '<button type="button" class="btn btn-success">新增</button>';
+			var html = "<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td tstock_id='{4}'>{5}</td></tr>"
+		    $("#myTable2").append(String.format(html,
+		    		item.id,
+		    		item.name,
+		    		item.symbol,
+		    		item.classify.name,
+		    		item.id,
+		    		addbtn_html	
+		    ));
+		});
+	});
+	
+}
+</script>
 
 </head>
 <body>

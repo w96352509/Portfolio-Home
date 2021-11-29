@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OrderBy;
 
 @Entity
 public class Watch {
@@ -28,9 +29,11 @@ public class Watch {
     @ManyToOne()
     @JoinColumn(name = "investor_id", referencedColumnName = "id")
     @JsonIgnoreProperties("watchs")
+    @OrderBy("id ASC")
     private Investor investor;
     
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @OrderBy("id ASC")
     @JoinTable(name = "watch_tstock", 
             joinColumns = {
                 @JoinColumn(name = "watch_id", 

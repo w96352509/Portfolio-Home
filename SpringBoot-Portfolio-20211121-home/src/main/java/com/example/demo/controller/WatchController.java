@@ -39,17 +39,13 @@ public class WatchController {
         List<Watch> list = watchRepository.findAll();
         return list;
     }
-    
-    @PutMapping(value = {"/{id}", "/update/{id}"})
+    @PutMapping(value = {"/{id}","/upt/{id}"})
     @Transactional
-    public Boolean update(@PathVariable("id") Integer id, @RequestBody Map<String, String> map) {
-        Watch o_Watch = watchRepository.findById(id).get();
-        if (o_Watch == null) {
-            return false;
-        }
-        o_Watch.setName(map.get("name"));
-        watchRepository.saveAndFlush(o_Watch);
-        return true;
+    public Boolean updata(@RequestBody Map<String, String> map , @PathVariable("id") Integer id) {
+    Watch watch = watchRepository.findById(id).get();
+    watch.setName(map.get("name"));
+    watchRepository.save(watch);
+    return true;
     }
     
     @GetMapping(value = {"/{id}/add/{tstock_id}"})
@@ -57,19 +53,18 @@ public class WatchController {
     public Watch add_tstock(@PathVariable("id") Integer id, @PathVariable("tstock_id") Integer tstock_id) {
         Watch watch = watchRepository.findById(id).get();
         TStock ts = tStockRepository.findById(tstock_id).get();
-        watch.addtStock(ts); //Set tStock add 加一個tStock進入watch的Set<tStock>中
+        watch.addtStock(ts);
         watchRepository.saveAndFlush(watch);
-        return get(id);
+        return watch;
+    }
+    @DeleteMapping(value = {"/{id}/del/{tstock_id}"})
+    public Boolean delete(@PathVariable("id") Integer id, @PathVariable("tstock_id") Integer tstock_id) {
+    	Watch watch = watchRepository.findById(id).get();
+        TStock ts = tStockRepository.findById(tstock_id).get();
+    	watch.removetStock(ts);
+    	watchRepository.saveAndFlush(watch);
+    	return true;
     }
     
-    @DeleteMapping(value = {"/{id}/remove/{tstock_id}"})
-    @Transactional
-    public Watch remove_tstock(@PathVariable("id") Integer id, @PathVariable("tstock_id") Integer tstock_id) {
-        Watch watch = watchRepository.findById(id).get();
-        TStock ts = tStockRepository.findById(tstock_id).get();
-        watch.removetStock(ts);//Set tStock remove 刪除tStock進入watch的Set<tStock>中
-        watchRepository.saveAndFlush(watch);
-        return get(id);
-    }
     
 }

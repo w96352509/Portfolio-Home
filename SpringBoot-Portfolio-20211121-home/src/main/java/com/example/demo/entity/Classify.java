@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 @Entity
@@ -27,6 +28,7 @@ public class Classify {
     private Boolean tx; // transaction
     
     @OneToMany(cascade=CascadeType.PERSIST, mappedBy="classify")
+    @OrderBy("id ASC")
     @JsonIgnoreProperties("classify") //防止遞回忽略單方欄位
     private Set<TStock> tStocks;
 

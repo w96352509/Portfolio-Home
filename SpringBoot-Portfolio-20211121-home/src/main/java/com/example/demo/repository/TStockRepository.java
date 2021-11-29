@@ -11,8 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.example.demo.entity.Classify;
-import com.example.demo.entity.Investor;
+
 import com.example.demo.entity.TStock;
 
 @Repository
